@@ -1,15 +1,17 @@
-#include "http.hpp"
-#include "server.hpp"
-#include "util.hpp"
-
 #include <arpa/inet.h>
 #include <cstring>
 #include <netdb.h>
 #include <print>
 
+#include "base.h"
+#include "http.h"
+#include "server.h"
+#include "util.h"
+
+
 void sample();
 
-int main(int argc, char *argv[]) {
+int main() {
     // sample();
     // in6_addr ia6 = IN6ADDR_ANY_INIT;
     //
@@ -47,8 +49,8 @@ int main(int argc, char *argv[]) {
 
 void sample() {
     util::devprint("---  SAMPLE  ---");
-    addrinfo hints;
-    addrinfo *servinfo = nullptr;
+    AddressInfo hints;
+    AddressInfo *servinfo = nullptr;
 
     memset(&hints, 0, sizeof hints);
     hints.ai_family = AF_UNSPEC;
@@ -60,7 +62,7 @@ void sample() {
         return;
     }
 
-    for (addrinfo *p = servinfo; p != nullptr; p = p->ai_next) {
+    for (AddressInfo *p = servinfo; p != nullptr; p = p->ai_next) {
         http::print_addr_info(*p);
     }
 

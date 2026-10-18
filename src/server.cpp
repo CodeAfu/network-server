@@ -8,9 +8,9 @@
 #include <sys/wait.h>
 
 #include "base.h"
-#include "http.hpp"
-#include "util.hpp"
-#include "server.hpp"
+#include "http.h"
+#include "util.h"
+#include "server.h"
 
 // private
 namespace srv {

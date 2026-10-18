@@ -1,21 +1,25 @@
 #pragma once
 
 #include <cstdint>
+#include <expected>
 #include <string>
 
+#include "base.h"
 #include "headers.h"
 
-struct addrinfo;
-struct sockaddr;
+enum class ParseError {
+    InvalidRequestLine,
+    InvalidHeader,
+};
 
 namespace http {
-addrinfo* get_addr_info(const char *host, const char *port, const ::addrinfo& hints);
-void* get_in_addr(::sockaddr *sa);
-void print_addr_info(const ::addrinfo& addr_info);
+AddressInfo* get_addr_info(const char *host, const char *port, const ::AddressInfo& hints);
+void* get_in_addr(::SocketAddress *sa);
+void print_addr_info(const ::AddressInfo& addr_info);
 
 bool send_msg(int sock_fd, const std::string& msg, int flags);
 const std::string recv_msg(int sock_fd, int flags);
-HttpRequest get_http_request(const std::string& raw_request);
+std::expected<HttpRequest, ParseError> get_http_request(const std::string& raw_request);
 std::string create_http_response(const HttpResponse& response);
 
 uint32_t htonf(float f);

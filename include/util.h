@@ -7,11 +7,8 @@
 #include <utility>
 #include <cstddef>
 
-#include "server.hpp"
-
-
-struct sockaddr_in;
-struct sockaddr_in6;
+#include "base.h"
+#include "server.h"
 
 namespace util {
 template <std::invocable F>
@@ -31,6 +28,7 @@ int tryCatch(F&& func) {
     return 0;
 }
 
+
 template <typename... Args>
 inline void devprint(std::format_string<Args...> fmt, Args&&... values) {
     const char* env = std::getenv("ENV");
@@ -42,7 +40,7 @@ inline void devprint(std::format_string<Args...> fmt, Args&&... values) {
     std::println("\x1b[0m");
 }
 
-void get_ipv4(sockaddr_in &sa, const char* addr, char *out, size_t out_len);
-void get_ipv6(sockaddr_in6 &sa6, const char* addr, char *out, size_t out_len);
-const char* inet_ntop(void *sa, const char* addr, char *out, size_t out_len);
+void get_ipv4(SocketAddressIPv4 &sa, const char* addr, char *out, size_t out_len);
+void get_ipv6(SocketAddressIPv6 &sa6, const char* addr, char *out, size_t out_len);
+const char* inet_ntop(const char* addr, char *out, size_t out_len);
 }; // namespace util

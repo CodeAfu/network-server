@@ -1,6 +1,6 @@
-# HTTP Server written in C++
+# Network Server written in C++
 
-Trying to get good at C++ so why not
+Trying to get good at C++ and C so why not
 
 ### Neovim
 
@@ -9,4 +9,5 @@ Trying to get good at C++ so why not
 
 ### Build
 
-Use Makefile lol
+CMake with Ninja
+

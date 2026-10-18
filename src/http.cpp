@@ -6,18 +6,13 @@
 #include <ranges>
 
 #include "base.h"
-#include "http.hpp"
-#include "util.hpp"
+#include "http.h"
+#include "util.h"
 
 #define pack754_32(f) (pack754(f), 32, 8)
 #define pack754_64(f) (pack754(f), 64, 11)
 #define unpack754_32(i) (unpack754((i), 32, 8))
 #define unpack754_64(i) (unpack754((i), 64, 11))
-
-enum class ParseError {
-    InvalidRequestLine,
-    InvalidHeader,
-};
 
 AddressInfo* http::get_addr_info(const char *host, const char* port, const ::AddressInfo &hints)
 {
@@ -117,15 +112,47 @@ const std::string http::recv_msg(int sock_fd, int flags = 0)
 std::expected<void, ParseError> parse_request_line(HttpRequest& req, std::string request_line)
 {
     auto words = request_line
-        | std::views::split(std::string{" "});
+        | std::views::split(std::string{" "})
+        | std::views::enumerate;
 
-    for (auto part : words) {
-        std::string word(part.begin(), part.end());
-        // GET /test HTTP/1.1
+    if (std::ranges::distance(words) > 3) {
+        std::println(stderr, "server: error: more than 3 words in request line");
+        return std::unexpected(ParseError::InvalidRequestLine);
     }
+
+    bool ROUTE_IMPLEMENTED = false;
+    for (auto [index, part] : words) {
+        std::string word(part.begin(), part.end());
+        
+        // GET /sample HTTP/1.1
+        switch (index) {
+        case 0:
+            if (!parse_method(word)) {
+                std::println(stderr, "server: error: invalid request method type");
+                return std::unexpected(ParseError::InvalidRequestLine);
+            }
+            req.method = word;
+            break;
+        case 1:
+            if (ROUTE_IMPLEMENTED) {
+                std::println(stderr, "server: error: invalid target in request line");
+                return std::unexpected(ParseError::InvalidRequestLine);
+            }
+            req.target = word;
+            break;
+        case 2:
+            if (word.compare("HTTP/1.1") != 0) {
+                std::println(stderr, "server: error: invalid or unsupported HTTP version provided: {}", word);
+                return std::unexpected(ParseError::InvalidRequestLine);
+            }
+            req.version = word;
+            break;
+        }
+    }
+    return {};
 }
 
-HttpRequest http::get_http_request(const std::string& raw_request)
+std::expected<HttpRequest, ParseError> http::get_http_request(const std::string& raw_request)
 {
     HttpRequest out;
     auto lines = raw_request 
@@ -135,10 +162,17 @@ HttpRequest http::get_http_request(const std::string& raw_request)
     for (auto [line_no, part] : lines) {
         std::string line(part.begin(), part.end());
         if (line_no == 0) {
-            if (!parse_request_line(out, line))
-                return {};
+            auto result = parse_request_line(out, line);
+            if (!result)
+                return std::unexpected(result.error());
+        }
+
+        if (line_no == 1) {
+
         }
     }
+
+    return out;
 
     // GET /test HTTP/1.1
     // Host: localhost:8096

@@ -1,11 +1,12 @@
 #pragma once
 
+#include <optional>
 #include <stdint.h>
 #include <stddef.h>
 #include <string>
 #include <vector>
 
-#define HTTP_METHODS(name) \
+#define HTTP_METHODS(X) \
     X(GET)                 \
     X(POST)                \
     X(PUT)                 \
@@ -27,6 +28,14 @@ constexpr std::string_view method_type(MethodType type)
 #undef X
     }
     return "UNKNOWN";
+}
+
+constexpr std::optional<MethodType> parse_method(std::string_view word)
+{
+#define X(name) if (word == #name) return MethodType::name;
+    HTTP_METHODS(X)
+#undef X
+    return std::nullopt;
 }
 
 #undef HTTP_METHODS

@@ -1,5 +1,5 @@
 BUILD_DIR := build
-TARGET := http-server
+TARGET := network-server
 
 .PHONY: all build run clean configure
 
