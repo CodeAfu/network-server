@@ -14,12 +14,12 @@
 
 // private
 namespace srv {
+void sigchld_handler(int s);
 template <typename F>
 bool try_srv_func( // TODO: delete
     F&& func,
     std::source_location location = std::source_location::current()
 );
-void sigchld_handler(int s);
 } // namespace srv
 
 srv::Server srv::init()

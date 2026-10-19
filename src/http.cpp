@@ -109,7 +109,8 @@ const std::string http::recv_msg(int sock_fd, int flags = 0)
     return message;
 }
 
-std::expected<void, ParseError> parse_request_line(HttpRequest& req, std::string request_line)
+internal std::expected<void, ParseError> 
+parse_request_line(HttpRequest& req, std::string request_line)
 {
     auto words = request_line
         | std::views::split(std::string{" "})
@@ -121,7 +122,7 @@ std::expected<void, ParseError> parse_request_line(HttpRequest& req, std::string
     }
 
     bool ROUTE_IMPLEMENTED = false;
-    for (auto [index, part] : words) {
+    for (const auto [index, part] : words) {
         std::string word(part.begin(), part.end());
         
         // GET /sample HTTP/1.1
@@ -152,6 +153,24 @@ std::expected<void, ParseError> parse_request_line(HttpRequest& req, std::string
     return {};
 }
 
+internal std::expected<void, ParseError> 
+parse_http_header(HttpRequest& req, const std::string& header)
+{
+    auto parts = header 
+        | std::views::split(std::string{":"});
+    
+    size_t parts_len = std::ranges::distance(parts);
+    if (parts_len != 2) {
+        std::println(stderr, "server: error: parse_http_header expected 2 parts, received '{}'", parts_len);
+        return std::unexpected(ParseError::InvalidHeader);
+    }
+
+    for (const auto part : parts) {
+        
+    }
+    
+}
+
 std::expected<HttpRequest, ParseError> http::get_http_request(const std::string& raw_request)
 {
     HttpRequest out;
@@ -159,16 +178,16 @@ std::expected<HttpRequest, ParseError> http::get_http_request(const std::string&
         | std::views::split(std::string{"\r\n"})
         | std::views::enumerate;
 
-    for (auto [line_no, part] : lines) {
+    for (const auto [line_no, part] : lines) {
         std::string line(part.begin(), part.end());
         if (line_no == 0) {
             auto result = parse_request_line(out, line);
             if (!result)
                 return std::unexpected(result.error());
-        }
-
-        if (line_no == 1) {
-
+        } else if (line_no >= 1) {
+            auto result = parse_http_header(out, line);
+            if (!result)
+                return std::unexpected(result.error());
         }
     }
 

@@ -5,13 +5,15 @@
 #include <stddef.h>
 #include <string>
 #include <vector>
+#include <array>
+#include <string_view>
 
 #define HTTP_METHODS(X) \
-    X(GET)                 \
-    X(POST)                \
-    X(PUT)                 \
-    X(DELETE)              \
-    X(PATCH)               \
+    X(GET)              \
+    X(POST)             \
+    X(PUT)              \
+    X(DELETE)           \
+    X(PATCH)            \
     X(OPTIONS)
 
 enum class MethodType {
@@ -38,7 +40,13 @@ constexpr std::optional<MethodType> parse_method(std::string_view word)
     return std::nullopt;
 }
 
-#undef HTTP_METHODS
+constexpr std::array<std::string_view, 5> VALID_HEADERS = {
+    "Host",
+    "User-Agent",
+    "Accept",
+    "Content-Type",
+    "Content-Length"
+};
 
 namespace ContentType {
 inline constexpr std::string_view TEXT = "text/plain";

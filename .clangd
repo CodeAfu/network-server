@@ -1,0 +1,4 @@
+If:
+  PathMatch: include/util\.h
+CompileFlags:
+  Add: [-DUTIL_IMPLEMENTATION]
