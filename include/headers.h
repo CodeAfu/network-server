@@ -40,6 +40,7 @@ constexpr std::optional<MethodType> parse_method(std::string_view word)
     return std::nullopt;
 }
 
+// TODO: add all headers and use in http.cpp parse_http_header
 constexpr std::array<std::string_view, 5> VALID_HEADERS = {
     "Host",
     "User-Agent",
@@ -110,6 +111,11 @@ static inline std::string status_reason(StatusCode code)
         default:
             return "";
     }
+}
+
+static inline void print_http_request(const HttpRequest& request)
+{
+    std::println("");
 }
 
 } // namespace header

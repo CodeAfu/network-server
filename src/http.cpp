@@ -8,11 +8,13 @@
 #include "base.h"
 #include "http.h"
 #include "util.h"
+#include "units.h"
 
 #define pack754_32(f) (pack754(f), 32, 8)
 #define pack754_64(f) (pack754(f), 64, 11)
 #define unpack754_32(i) (unpack754((i), 32, 8))
 #define unpack754_64(i) (unpack754((i), 64, 11))
+#define MESSAGE_CAP MiB(8)
 
 AddressInfo* http::get_addr_info(const char *host, const char* port, const ::AddressInfo &hints)
 {
@@ -92,7 +94,7 @@ bool http::send_msg(int sock_fd, const std::string& msg, int flags = 0)
 
 const std::string http::recv_msg(int sock_fd, int flags = 0)
 {
-    std::string message(4096, '\0');
+    std::string message(MESSAGE_CAP, '\0');
     ssize_t received = ::recv(sock_fd, message.data(), message.size(), flags);
     if (received == -1) {
         int error_no = errno;

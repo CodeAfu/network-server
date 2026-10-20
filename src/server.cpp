@@ -126,9 +126,11 @@ void srv::run(Server& srv)
         std::println("server: received connection from {}", s);
 
         const std::string& client_msg = http::recv_msg(client_fd, 0);
-        // HttpRequest request = 
-        if (client_msg.size() > 0)
-            std::println("server: message received:\n{}", client_msg);
+        std::expected<HttpRequest, ParseError> request = http::get_http_request(client_msg);
+        if (!request)
+            continue;
+
+        std::println("server: message received:\n{}", client_msg);
 
         std::string msg = "Connected to genzoku's server!";
         const HttpResponse response{

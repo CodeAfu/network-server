@@ -1,4 +1,4 @@
 If:
-  PathMatch: include/util\.h
+  PathMatch: include/network\.h
 CompileFlags:
-  Add: [-DUTIL_IMPLEMENTATION]
+  Add: [-DNETWORK_IMPLEMENTATION]
