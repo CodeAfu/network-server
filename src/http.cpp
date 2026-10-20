@@ -156,19 +156,21 @@ parse_request_line(HttpRequest& req, std::string request_line)
 internal std::expected<void, ParseError> 
 parse_http_header(HttpRequest& req, const std::string& header)
 {
-    auto parts = header 
-        | std::views::split(std::string{":"});
-    
-    size_t parts_len = std::ranges::distance(parts);
-    if (parts_len != 2) {
-        std::println(stderr, "server: error: parse_http_header expected 2 parts, received '{}'", parts_len);
+    const size_t pos = header.find(':');
+    if (pos == std::string::npos) {
+        std::println("server: error: no colon found in header: '{}'", header);
         return std::unexpected(ParseError::InvalidHeader);
     }
 
-    for (const auto part : parts) {
-        
-    }
-    
+    const std::string name = header.substr(0, pos);
+    const std::string value = header.substr(pos + 1);
+
+    req.headers.push_back({
+        .name = name,
+        .value = value
+    });
+
+    return {};
 }
 
 std::expected<HttpRequest, ParseError> http::get_http_request(const std::string& raw_request)
