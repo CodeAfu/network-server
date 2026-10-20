@@ -1,6 +1,7 @@
 #pragma once
 
 #include <optional>
+#include <print>
 #include <stdint.h>
 #include <stddef.h>
 #include <string>
@@ -113,9 +114,18 @@ static inline std::string status_reason(StatusCode code)
     }
 }
 
-static inline void print_http_request(const HttpRequest& request)
+static inline void print_request(const HttpRequest& request)
 {
-    std::println("");
+    std::string res = std::format("{} {} {}\n",
+                                  request.method,
+                                  request.target,
+                                  request.version);
+    
+    for (const auto& header: request.headers) {
+        res += std::format("{}: {}\n", header.name, header.value);
+    }
+    res += std::format("\n{}\n", request.body);
+    std::print("{}", res);
 }
 
 } // namespace header
