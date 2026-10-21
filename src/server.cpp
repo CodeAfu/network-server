@@ -130,7 +130,7 @@ void srv::run(Server& srv)
         if (!request)
             continue;
 
-        // header::print_request(*request);
+        header::print_request(*request);
         // std::println("server: message received:\n{}", client_msg);
 
         std::string msg = "Connected to genzoku's server!";

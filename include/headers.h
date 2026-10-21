@@ -121,9 +121,9 @@ static inline void print_request(const HttpRequest& request)
                                   request.target,
                                   request.version);
     
-    for (const auto& header: request.headers) {
+    for (const auto& header: request.headers)
         res += std::format("{}: {}\n", header.name, header.value);
-    }
+
     res += std::format("\n{}\n", request.body);
     std::print("{}", res);
 }

@@ -4,10 +4,11 @@
 #include <expected>
 #include <string>
 
-#include "base.h"
 #include "headers.h"
+#include "base.h"
 
 enum class ParseError {
+    InvalidRequestSections,
     InvalidRequestLine,
     InvalidHeader,
 };

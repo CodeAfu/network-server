@@ -165,7 +165,8 @@ parse_http_header(HttpRequest& req, const std::string& header)
     }
 
     const std::string name = header.substr(0, pos);
-    const std::string value = header.substr(pos + 1);
+    std::string value = header.substr(pos + 1);
+    util::str_trim(value);
 
     req.headers.push_back({
         .name = name,
@@ -177,8 +178,24 @@ parse_http_header(HttpRequest& req, const std::string& header)
 
 std::expected<HttpRequest, ParseError> http::get_http_request(const std::string& raw_request)
 {
+    // GET /test HTTP/1.1
+    // Host: localhost:8096
+    // User-Agent: curl/8.22.0
+    // Accept: */*
+    // Content-Type: application/json
+    // Content-Length: 20
+
     HttpRequest out;
-    auto lines = raw_request 
+
+    const auto sections_separator = raw_request.find("\r\n\r\n");
+    if (sections_separator == std::string::npos) {
+        std::print(stderr, "server: error: no separator found in request");
+        return std::unexpected(ParseError::InvalidRequestSections);
+    }
+    const std::string headers = raw_request.substr(0, sections_separator);
+    const std::string body = raw_request.substr(sections_separator + 4);
+
+    auto lines = headers
         | std::views::split(std::string{"\r\n"})
         | std::views::enumerate;
 
@@ -194,15 +211,7 @@ std::expected<HttpRequest, ParseError> http::get_http_request(const std::string&
                 return std::unexpected(result.error());
         }
     }
-
     return out;
-
-    // GET /test HTTP/1.1
-    // Host: localhost:8096
-    // User-Agent: curl/8.22.0
-    // Accept: */*
-    // Content-Type: application/json
-    // Content-Length: 20
 }
 
 std::string http::create_http_response(const HttpResponse& resp)
