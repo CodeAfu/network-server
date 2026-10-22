@@ -29,7 +29,7 @@ srv::Server srv::init()
     /* Read addreess info */
     AddressInfo hints = AddressInfo{
         .ai_flags = AI_PASSIVE,     // fill the ip for me
-        .ai_family = AF_INET,       // IPv4
+        .ai_family = AF_UNSPEC,     // IPv4 and IPv6
         .ai_socktype = SOCK_STREAM, // TCP stream sockets
     };
 
@@ -120,7 +120,7 @@ void srv::run(Server& srv)
             continue;
 ::
         inet_ntop(client_addr.ss_family,
-                  http::get_in_addr((SocketAddress *)&client_addr),
+                  http::get_in_addr((SocketAddress*)&client_addr),
                   s,
                   sizeof(s));
         std::println("server: received connection from {}", s);
