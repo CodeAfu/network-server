@@ -211,6 +211,7 @@ std::expected<HttpRequest, ParseError> http::get_http_request(const std::string&
                 return std::unexpected(result.error());
         }
     }
+    out.body = body;
     return out;
 }
 

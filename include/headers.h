@@ -1,7 +1,7 @@
 #pragma once
 
+#include "util.h"
 #include <optional>
-#include <print>
 #include <stdint.h>
 #include <stddef.h>
 #include <string>
@@ -53,6 +53,7 @@ constexpr std::array<std::string_view, 5> VALID_HEADERS = {
 namespace ContentType {
 inline constexpr std::string_view TEXT = "text/plain";
 inline constexpr std::string_view JSON = "application/json";
+inline constexpr std::string_view FORM_URLENCODED = "application/x-www-form-urlencoded";
 } // namespace ContentType
 
 enum StatusCode {
@@ -125,7 +126,7 @@ static inline void print_request(const HttpRequest& request)
         res += std::format("{}: {}\n", header.name, header.value);
 
     res += std::format("\n{}\n", request.body);
-    std::print("{}", res);
+    util::devprint("server: client message received:\n{}", res);
 }
 
 } // namespace header

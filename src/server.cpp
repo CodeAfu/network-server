@@ -131,7 +131,6 @@ void srv::run(Server& srv)
             continue;
 
         header::print_request(*request);
-        // std::println("server: message received:\n{}", client_msg);
 
         std::string msg = "Connected to genzoku's server!";
         const HttpResponse response{
